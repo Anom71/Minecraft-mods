@@ -1,0 +1,11 @@
+{
+  "name": "TooBee %s 1.21.4",
+  "formatVersion": 3,
+  "game": "minecraft",
+  "versionId": "0.0.3",
+  "summary": "官方文档 https://toobee.top/docs/client/modpack",
+  "dependencies": {
+    "fabric-loader": "0.16.10",
+    "minecraft": "1.21.4"
+  }
+}
