@@ -14,10 +14,8 @@ public final class InstantJsonReader {
     private static final Logger LOGGER = Logger.getLogger("WriteJsonToFile");
 
     private final @NotNull File file;
-    private final @NotNull String key;
-    public InstantJsonReader(@NotNull String path, @NotNull String key) {
+    public InstantJsonReader(@NotNull String path) {
         this.file = new File(path + ".json");
-        this.key = key;
     }
 
     public @NotNull JsonElement read() {
@@ -29,7 +27,11 @@ public final class InstantJsonReader {
         }
     }
 
-    public @NotNull JsonElement get() {
+    public boolean exists() {
+        return file.exists();
+    }
+
+    public @NotNull JsonElement get(@NotNull String key) {
         return read().getAsJsonObject().get(key);
     }
 }

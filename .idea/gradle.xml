@@ -8,7 +8,7 @@
         <option name="gradleHome" value="" />
         <option name="modules">
           <set>
-            <option value="/data/Code/Java/modpack-tool" />
+            <option value="/data/Code/Java/Client-Modpacker" />
           </set>
         </option>
       </GradleProjectSettings>

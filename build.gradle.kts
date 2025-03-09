@@ -1,5 +1,3 @@
-import java.lang.System
-
 plugins {
     id("application")
 }
@@ -32,7 +30,7 @@ tasks.withType<JavaExec> {
         }
     }
 
-    standardInput = System.'in'
+    standardInput = System.`in`
     workingDir = file(dir)
 }
 

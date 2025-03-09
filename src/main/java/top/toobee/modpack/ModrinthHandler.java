@@ -133,15 +133,18 @@ public final class ModrinthHandler {
         return array.get(0).getAsJsonObject();
     }
 
-    public static @NotNull JsonObject fromModrinthFileToIndex(@NotNull Path dir, @NotNull JsonObject post)
+    public static @NotNull JsonObject fromModrinthFileToIndex(@NotNull Path dir, boolean optional, @NotNull JsonObject post)
             throws NullPointerException, ClassCastException {
-        var obj = new JsonObject();
-        var downloads = new JsonArray();
+        final var obj = new JsonObject();
+        final var downloads = new JsonArray();
         downloads.add(post.getAsJsonPrimitive("url"));
         obj.add("downloads", downloads);
         obj.add("fileSize", post.getAsJsonPrimitive("size"));
         obj.add("hashes", post.getAsJsonObject("hashes"));
         obj.addProperty("path", dir.resolve(post.getAsJsonPrimitive("filename").getAsString()).toString());
+        final var env = new JsonObject();
+        env.addProperty("client", optional ? "optional" : "required");
+        obj.add("env", env);
         return obj;
     }
 
@@ -149,10 +152,11 @@ public final class ModrinthHandler {
         var array = new JsonArray();
         set.forEach(array::add);
         String encodedParams = URLEncoder.encode(array.toString(), StandardCharsets.UTF_8);
-        return new URI("https://api.modrinth.com/v2/versions").resolve("versions?ids=" + encodedParams);
+        return new URI("https://api.modrinth.com/v2/").resolve("versions?ids=" + encodedParams);
     }
 
-    public static void getVersions(Map<String, Path> map) throws URISyntaxException, IOException, InterruptedException {
+    public static void getVersions(Map<String, Map.Entry<@NotNull Path, @NotNull Boolean>> map)
+            throws URISyntaxException, IOException, InterruptedException {
         var request = HttpRequest.newBuilder(resolveURI(map.keySet()))
                 .header("Accept","*/*")
                 .timeout(Duration.ofSeconds(5))
@@ -172,7 +176,7 @@ public final class ModrinthHandler {
             try {
                 var obj = element.getAsJsonObject();
                 var dir = map.remove(obj.getAsJsonPrimitive("id").getAsString());
-                var index = fromModrinthFileToIndex(dir, extractFileInfo(obj));
+                var index = fromModrinthFileToIndex(dir.getKey(), dir.getValue(), extractFileInfo(obj));
                 result.add(index);
             } catch (Exception e) {
                 error.add(element);
